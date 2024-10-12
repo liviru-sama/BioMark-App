@@ -16,9 +16,29 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     User? user = FirebaseAuth.instance.currentUser;
 
     String newEmail = _newEmailController.text;
+    String currentPassword = _currentPasswordController.text;
+
+    if (newEmail.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Please enter a new email.'),
+      ));
+      return;
+    }
 
     try {
-      await user!.updateEmail(newEmail);
+      // Re-authenticate the user
+      AuthCredential credential = EmailAuthProvider.credential(
+        email: user!.email!,
+        password: currentPassword,
+      );
+      await user.reauthenticateWithCredential(credential);
+
+      // Update the email
+      await user.updateEmail(newEmail);
+
+      // Send email verification
+      await user.sendEmailVerification();
+
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Email updated successfully. Please verify your new email.'),
       ));
@@ -27,6 +47,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Failed to update email: ${e.message}'),
       ));
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -92,6 +114,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             ),
             SizedBox(height: 10),
             _buildEmailInput('New Email Address', _newEmailController),
+            SizedBox(height: 20),
+            _buildPasswordInput('Current Password (Required for Email Update)', _currentPasswordController),
             SizedBox(height: 20),
             Center(
               child: _buildActionButton('Update Email', _updateEmail),
