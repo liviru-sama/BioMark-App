@@ -1,4 +1,3 @@
-// lib/screens/forgot_password_screen.dart
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
@@ -91,53 +90,115 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Account Recovery'),
+        title: Text('Account Recovery', style: TextStyle(color: Colors.black87)),
+        backgroundColor: Colors.white,
+        elevation: 0, // No shadow
       ),
-      body: _isLoading ? Center(child: CircularProgressIndicator()) :
-      Padding(
-        padding: EdgeInsets.all(16.0),
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Padding(
+        padding: EdgeInsets.all(24.0),
         child: Form(
           key: _formKey,
-          child: Column(
-            children: [
-              // Full Name
-              TextFormField(
-                controller: _fullNameController,
-                decoration: InputDecoration(labelText: 'Full Name'),
-                validator: (value) => value!.isEmpty ? 'Enter your full name' : null,
-              ),
-              SizedBox(height: 10),
-              // Date of Birth
-              TextFormField(
-                controller: _dobController,
-                decoration: InputDecoration(labelText: 'Date of Birth (YYYY-MM-DD)'),
-                validator: (value) => value!.isEmpty ? 'Enter your date of birth' : null,
-              ),
-              SizedBox(height: 10),
-              // Security Answer 1
-              TextFormField(
-                controller: _securityAnswer1,
-                decoration: InputDecoration(labelText: 'Childhood Best Friend\'s Name'),
-                validator: (value) => value!.isEmpty ? 'Enter your answer' : null,
-              ),
-              SizedBox(height: 10),
-              // Security Answer 2
-              TextFormField(
-                controller: _securityAnswer2,
-                decoration: InputDecoration(labelText: 'Childhood Pet\'s Name'),
-                validator: (value) => value!.isEmpty ? 'Enter your answer' : null,
-              ),
-              SizedBox(height: 20),
-              // Recover Button
-              ElevatedButton(
-                onPressed: _recoverAccount,
-                child: Text('Recover Account'),
-              ),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Heading Text
+                Text(
+                  'Recover Your Account',
+                  style: TextStyle(
+                    fontSize: 28.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 20),
+
+                // Full Name Field
+                _buildTextField(
+                  controller: _fullNameController,
+                  labelText: 'Full Name',
+                ),
+                SizedBox(height: 16.0),
+
+                // Date of Birth Field
+                _buildTextField(
+                  controller: _dobController,
+                  labelText: 'Date of Birth (YYYY-MM-DD)',
+                ),
+                SizedBox(height: 16.0),
+
+                // Security Answer 1 Field
+                _buildTextField(
+                  controller: _securityAnswer1,
+                  labelText: 'Childhood Best Friend\'s Name',
+                ),
+                SizedBox(height: 16.0),
+
+                // Security Answer 2 Field
+                _buildTextField(
+                  controller: _securityAnswer2,
+                  labelText: 'Childhood Pet\'s Name',
+                ),
+                SizedBox(height: 20),
+
+                // Recover Button
+                ElevatedButton(
+                  onPressed: _recoverAccount,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(vertical: 18.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                  ),
+                  child: Text(
+                    'Recover Account',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String labelText,
+  }) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: labelText,
+        labelStyle: TextStyle(
+          color: Colors.black54,
+          fontWeight: FontWeight.w500,
+        ),
+        filled: true,
+        fillColor: Colors.white,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30.0),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30.0),
+          borderSide: BorderSide(color: Colors.blue),
+        ),
+        contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 18.0),
+      ),
+      validator: (value) => value!.isEmpty ? 'Enter your answer' : null,
+      style: TextStyle(color: Colors.black87),
     );
   }
 }

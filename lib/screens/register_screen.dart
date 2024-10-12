@@ -21,8 +21,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _height = TextEditingController();
   final TextEditingController _ethnicity = TextEditingController();
   final TextEditingController _eyeColor = TextEditingController();
-  String _bloodGroup = 'A+'; // Default value for blood group
-  String _sex = 'Male'; // Default value for sex
+  final TextEditingController _mothersMaidenName = TextEditingController();
+  final TextEditingController _bestFriendName = TextEditingController();
+  final TextEditingController _petName = TextEditingController();
+  final TextEditingController _customQuestion = TextEditingController();
+
+  String _bloodGroup = 'A+';
+  String _sex = 'Male';
   bool _isLoading = false;
 
   Future<void> _register() async {
@@ -31,7 +36,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _isLoading = true;
       });
       try {
-        firebase_auth.UserCredential userCredential = await firebase_auth.FirebaseAuth.instance
+        firebase_auth.UserCredential userCredential =
+        await firebase_auth.FirebaseAuth.instance
             .createUserWithEmailAndPassword(
           email: _email.text.trim(),
           password: _password.text,
@@ -40,7 +46,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
         // Encrypt sensitive data before saving
         final encryptedFullName = encryptData(_fullName.text.trim());
 
-        await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .set({
           'fullName': encryptedFullName,
           'email': _email.text.trim(),
           'dateOfBirth': _dateOfBirth.text.trim(),
@@ -51,6 +60,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
           'height': _height.text.trim(),
           'ethnicity': _ethnicity.text.trim(),
           'eyeColor': _eyeColor.text.trim(),
+          'mothersMaidenName': _mothersMaidenName.text.trim(),
+          'bestFriendName': _bestFriendName.text.trim(),
+          'petName': _petName.text.trim(),
+          'customQuestion': _customQuestion.text.trim(),
           'createdAt': FieldValue.serverTimestamp(),
         });
 
@@ -64,7 +77,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         } else {
           message = 'An error occurred. Please try again.';
         }
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(message)));
       } finally {
         setState(() {
           _isLoading = false;
@@ -84,29 +98,36 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _height.dispose();
     _ethnicity.dispose();
     _eyeColor.dispose();
+    _mothersMaidenName.dispose();
+    _bestFriendName.dispose();
+    _petName.dispose();
+    _customQuestion.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF1F5FB), // Light background consistent with login screen
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Register'),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        foregroundColor: Colors.blue, // Blue text color for consistency
+        foregroundColor: Colors.black87,
+        title: Text(
+          'Register',
+          style: TextStyle(color: Colors.black),
+        ),
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(24.0),
         child: Form(
           key: _formKey,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Title Text
               Text(
                 'Create Account',
                 style: TextStyle(
@@ -116,23 +137,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 8),
               Text(
                 'Fill in your details to create a new account.',
-                style: TextStyle(fontSize: 16.0, color: Colors.grey),
+                style: TextStyle(
+                    fontSize: 16.0, color: Colors.black54),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 30),
-
-              // Full Name Field
+              SizedBox(height: 40),
               _buildTextField(
                 controller: _fullName,
                 labelText: 'Full Name',
                 icon: Icons.person,
               ),
               SizedBox(height: 16.0),
-
-              // Email Field
               _buildTextField(
                 controller: _email,
                 labelText: 'Email Address',
@@ -140,8 +158,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 keyboardType: TextInputType.emailAddress,
               ),
               SizedBox(height: 16.0),
-
-              // Password Field
               _buildTextField(
                 controller: _password,
                 labelText: 'Password',
@@ -149,36 +165,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 isPassword: true,
               ),
               SizedBox(height: 16.0),
-
-              // Date of Birth Field
               _buildTextField(
                 controller: _dateOfBirth,
                 labelText: 'Date of Birth (YYYY-MM-DD)',
                 icon: Icons.calendar_today,
               ),
               SizedBox(height: 16.0),
-
-              // Time of Birth Field
               _buildTextField(
                 controller: _timeOfBirth,
                 labelText: 'Time of Birth (HH:MM)',
                 icon: Icons.access_time,
               ),
               SizedBox(height: 16.0),
-
-              // Location of Birth Field
               _buildTextField(
                 controller: _locationOfBirth,
                 labelText: 'Location of Birth',
                 icon: Icons.location_on,
               ),
               SizedBox(height: 16.0),
-
-              // Blood Group Dropdown
               _buildDropdownField(
                 value: _bloodGroup,
                 labelText: 'Blood Group',
-                items: ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'],
+                items: [
+                  'A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'
+                ],
                 onChanged: (String? newValue) {
                   setState(() {
                     _bloodGroup = newValue!;
@@ -186,8 +196,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 },
               ),
               SizedBox(height: 16.0),
-
-              // Sex Dropdown
               _buildDropdownField(
                 value: _sex,
                 labelText: 'Sex',
@@ -199,38 +207,54 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 },
               ),
               SizedBox(height: 16.0),
-
-              // Height Field
               _buildTextField(
                 controller: _height,
                 labelText: 'Height (cm)',
                 icon: Icons.height,
               ),
               SizedBox(height: 16.0),
-
-              // Ethnicity Field
               _buildTextField(
                 controller: _ethnicity,
                 labelText: 'Ethnicity',
                 icon: Icons.people,
               ),
               SizedBox(height: 16.0),
-
-              // Eye Color Field
               _buildTextField(
                 controller: _eyeColor,
                 labelText: 'Eye Color',
                 icon: Icons.remove_red_eye,
               ),
+              SizedBox(height: 16.0),
+              _buildTextField(
+                controller: _mothersMaidenName,
+                labelText: 'Mother\'s Maiden Name',
+                icon: Icons.person_outline,
+              ),
+              SizedBox(height: 16.0),
+              _buildTextField(
+                controller: _bestFriendName,
+                labelText: 'Childhood Best Friend\'s Name',
+                icon: Icons.person_pin,
+              ),
+              SizedBox(height: 16.0),
+              _buildTextField(
+                controller: _petName,
+                labelText: 'Childhood Pet\'s Name',
+                icon: Icons.pets,
+              ),
+              SizedBox(height: 16.0),
+              _buildTextField(
+                controller: _customQuestion,
+                labelText: 'Your Own Question',
+                icon: Icons.question_answer,
+              ),
               SizedBox(height: 30),
-
-              // Register Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _register,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: Colors.black,
                     padding: const EdgeInsets.symmetric(vertical: 18.0),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
@@ -241,6 +265,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -262,30 +287,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }) {
     return TextFormField(
       controller: controller,
-      decoration: InputDecoration(
-        labelText: labelText,
-        labelStyle: TextStyle(
-          color: Colors.black54,
-          fontWeight: FontWeight.w500,
-        ),
-        suffixIcon: Icon(icon, color: Colors.blue),
-        filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30.0),
-          borderSide: BorderSide.none,
-        ),
-        contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 18.0),
-      ),
       obscureText: isPassword,
       keyboardType: keyboardType,
+      decoration: InputDecoration(
+        labelText: labelText,
+        prefixIcon: Icon(icon),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
+        contentPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0), // Standardizing padding
+      ),
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'This field is required';
+          return '$labelText cannot be empty';
         }
         return null;
       },
-      style: TextStyle(color: Colors.black87),
     );
   }
 
@@ -293,41 +308,36 @@ class _RegisterScreenState extends State<RegisterScreen> {
     required String value,
     required String labelText,
     required List<String> items,
-    required ValueChanged<String?> onChanged,
+    required void Function(String?) onChanged,
   }) {
-    return DropdownButtonFormField<String>(
-      value: value,
+    return InputDecorator(
       decoration: InputDecoration(
         labelText: labelText,
-        labelStyle: TextStyle(
-          color: Colors.black54,
-          fontWeight: FontWeight.w500,
-        ),
-        filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30.0),
-          borderSide: BorderSide.none,
-        ),
-        contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 18.0),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
+        contentPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0), // Standardizing padding
       ),
-      items: items.map((String item) {
-        return DropdownMenuItem<String>(
-          value: item,
-          child: Text(item),
-        );
-      }).toList(),
-      onChanged: onChanged,
-      style: TextStyle(color: Colors.black87),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: value,
+          onChanged: onChanged,
+          isExpanded: true,
+          items: items.map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+        ),
+      ),
     );
   }
-}
 
-// Encryption function for security
-String encryptData(String plainText) {
-  final key = encrypt.Key.fromLength(32); // Store securely
-  final iv = encrypt.IV.fromLength(16);
-  final encrypter = encrypt.Encrypter(encrypt.AES(key));
-  final encrypted = encrypter.encrypt(plainText, iv: iv);
-  return encrypted.base64;
+  String encryptData(String data) {
+    // Example encryption logic (you would replace this with your actual encryption method)
+    final key = encrypt.Key.fromLength(32);
+    final iv = encrypt.IV.fromLength(16);
+    final encrypter = encrypt.Encrypter(encrypt.AES(key));
+    final encrypted = encrypter.encrypt(data, iv: iv);
+    return encrypted.base64;
+  }
 }

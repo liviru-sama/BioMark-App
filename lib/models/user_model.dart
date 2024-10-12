@@ -1,4 +1,6 @@
 // lib/models/user_model.dart
+import 'package:encrypt/encrypt.dart' as encrypt;
+
 class UserModel {
   final String uid;
   final String fullName;
@@ -11,7 +13,13 @@ class UserModel {
   final String height;
   final String ethnicity;
   final String eyeColour;
-  // Add other fields as necessary
+
+  // New fields for security questions
+  final String motherMaidenName;
+  final String childhoodBestFriend;
+  final String childhoodPetName;
+  final String ownQuestion;
+  final String ownAnswer;
 
   UserModel({
     required this.uid,
@@ -25,7 +33,21 @@ class UserModel {
     required this.height,
     required this.ethnicity,
     required this.eyeColour,
+    required this.motherMaidenName,
+    required this.childhoodBestFriend,
+    required this.childhoodPetName,
+    required this.ownQuestion,
+    required this.ownAnswer,
   });
+
+  // Encrypt data function for sensitive fields
+  static String encryptData(String plainText) {
+    final key = encrypt.Key.fromLength(32); // Store this key securely
+    final iv = encrypt.IV.fromLength(16);
+    final encrypter = encrypt.Encrypter(encrypt.AES(key));
+    final encrypted = encrypter.encrypt(plainText, iv: iv);
+    return encrypted.base64;
+  }
 
   // Factory method to create a UserModel from Firestore data
   factory UserModel.fromMap(Map<String, dynamic> data, String uid) {
@@ -41,6 +63,11 @@ class UserModel {
       height: data['height'] ?? '',
       ethnicity: data['ethnicity'] ?? '',
       eyeColour: data['eyeColour'] ?? '',
+      motherMaidenName: data['motherMaidenName'] ?? '',
+      childhoodBestFriend: data['childhoodBestFriend'] ?? '',
+      childhoodPetName: data['childhoodPetName'] ?? '',
+      ownQuestion: data['ownQuestion'] ?? '',
+      ownAnswer: data['ownAnswer'] ?? '',
     );
   }
 
@@ -57,7 +84,11 @@ class UserModel {
       'height': height,
       'ethnicity': ethnicity,
       'eyeColour': eyeColour,
-      // Add other fields as necessary
+      'motherMaidenName': motherMaidenName,
+      'childhoodBestFriend': childhoodBestFriend,
+      'childhoodPetName': childhoodPetName,
+      'ownQuestion': ownQuestion,
+      'ownAnswer': ownAnswer,
     };
   }
 }

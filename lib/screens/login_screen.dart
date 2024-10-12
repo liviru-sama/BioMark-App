@@ -46,10 +46,10 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF1F5FB), // Light background
+      backgroundColor: Colors.white,
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -64,19 +64,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 8),
               Text(
-                'Hello there, sign in to continue!',
-                style: TextStyle(fontSize: 16.0, color: Colors.grey),
+                'Glad to see you, Again!',
+                style: TextStyle(fontSize: 16.0, color: Colors.black54),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 30),
+              SizedBox(height: 40),
 
               // Username or Email Field
               _buildTextField(
                 controller: _emailController,
                 labelText: 'Username or email',
-                icon: Icons.check_circle, // Check icon
+                icon: Icons.person_outline,
               ),
               SizedBox(height: 16.0),
 
@@ -84,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
               _buildTextField(
                 controller: _passwordController,
                 labelText: 'Password',
-                icon: Icons.check_circle,
+                icon: Icons.lock_outline,
                 isPassword: true,
               ),
               SizedBox(height: 10),
@@ -99,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ));
                   },
                   child: Text(
-                    'Forgot Password?',
+                    'Forgot password?',
                     style: TextStyle(
                       color: Colors.blue,
                       fontSize: 14,
@@ -107,7 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 30),
+              SizedBox(height: 20),
 
               // Error Message Display
               if (_errorMessage != null)
@@ -126,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _login,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: Colors.black,
                     padding: const EdgeInsets.symmetric(vertical: 18.0),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
@@ -137,15 +137,19 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: Colors.white,
                   )
                       : Text(
-                    'Sign in',
+                    'Login',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                 ),
               ),
               SizedBox(height: 20),
+
+
+
 
               // Sign Up Option
               Center(
@@ -160,10 +164,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Text.rich(
                     TextSpan(
                       text: "Don't have an account? ",
-                      style: TextStyle(color: Colors.grey),
+                      style: TextStyle(color: Colors.black54),
                       children: [
                         TextSpan(
-                          text: 'Sign up',
+                          text: 'Sign Up',
                           style: TextStyle(
                             color: Colors.blue,
                             fontWeight: FontWeight.bold,
@@ -195,17 +199,34 @@ class _LoginScreenState extends State<LoginScreen> {
           color: Colors.black54,
           fontWeight: FontWeight.w500,
         ),
-        suffixIcon: Icon(icon, color: Colors.blue),
+        prefixIcon: Icon(icon, color: Colors.black54),
         filled: true,
         fillColor: Colors.white,
-        border: OutlineInputBorder(
+        enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30.0),
+          borderSide: BorderSide(color: Colors.blue),
         ),
         contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 18.0),
       ),
       obscureText: isPassword,
       style: TextStyle(color: Colors.black87),
+    );
+  }
+
+  Widget _buildSocialLoginButton(String assetPath) {
+    return GestureDetector(
+      onTap: () {
+        // Handle social login logic
+      },
+      child: Image.asset(
+        assetPath,
+        height: 40,
+        width: 40,
+      ),
     );
   }
 }
