@@ -1,4 +1,3 @@
-// lib/models/user_model.dart
 import 'package:encrypt/encrypt.dart' as encrypt;
 
 class UserModel {
@@ -21,6 +20,9 @@ class UserModel {
   final String ownQuestion;
   final String ownAnswer;
 
+  // New field for subscription status
+  final String subscriptionStatus;
+
   UserModel({
     required this.uid,
     required this.fullName,
@@ -38,6 +40,7 @@ class UserModel {
     required this.childhoodPetName,
     required this.ownQuestion,
     required this.ownAnswer,
+    required this.subscriptionStatus,
   });
 
   // Encrypt data function for sensitive fields
@@ -68,6 +71,7 @@ class UserModel {
       childhoodPetName: data['childhoodPetName'] ?? '',
       ownQuestion: data['ownQuestion'] ?? '',
       ownAnswer: data['ownAnswer'] ?? '',
+      subscriptionStatus: data['subscriptionStatus'] ?? 'off', // Default to 'off'
     );
   }
 
@@ -89,6 +93,35 @@ class UserModel {
       'childhoodPetName': childhoodPetName,
       'ownQuestion': ownQuestion,
       'ownAnswer': ownAnswer,
+      'subscriptionStatus': subscriptionStatus, // Add this field
     };
+  }
+
+  // Adding the copyWith method to allow modifying fields without modifying the original object
+  UserModel copyWith({
+    String? fullName,
+    String? email,
+    String? subscriptionStatus,
+    // Add other fields here as needed
+  }) {
+    return UserModel(
+      uid: this.uid,
+      fullName: fullName ?? this.fullName,
+      email: email ?? this.email,
+      dateOfBirth: this.dateOfBirth,
+      timeOfBirth: this.timeOfBirth,
+      locationOfBirth: this.locationOfBirth,
+      bloodGroup: this.bloodGroup,
+      sex: this.sex,
+      height: this.height,
+      ethnicity: this.ethnicity,
+      eyeColour: this.eyeColour,
+      motherMaidenName: this.motherMaidenName,
+      childhoodBestFriend: this.childhoodBestFriend,
+      childhoodPetName: this.childhoodPetName,
+      ownQuestion: this.ownQuestion,
+      ownAnswer: this.ownAnswer,
+      subscriptionStatus: subscriptionStatus ?? this.subscriptionStatus,
+    );
   }
 }

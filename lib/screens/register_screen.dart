@@ -64,6 +64,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           'bestFriendName': _bestFriendName.text.trim(),
           'petName': _petName.text.trim(),
           'customQuestion': _customQuestion.text.trim(),
+          'subscriptionStatus': 'on',
           'createdAt': FieldValue.serverTimestamp(),
         });
 
