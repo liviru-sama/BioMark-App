@@ -50,7 +50,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             .collection('users')
             .doc(userCredential.user!.uid)
             .set({
-          'fullName': encryptedFullName,
+          'fullName': _fullName.text.trim(),
           'email': _email.text.trim(),
           'dateOfBirth': _dateOfBirth.text.trim(),
           'timeOfBirth': _timeOfBirth.text.trim(),

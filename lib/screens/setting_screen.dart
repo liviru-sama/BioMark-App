@@ -6,12 +6,21 @@ import '../providers/auth_provider.dart';
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key? key}) : super(key: key);
 
-  Future<void> _toggleSubscription(bool isSubscribed, String? uid) async {
+  Future<void> _toggleSubscription(BuildContext context, bool isSubscribed, String? uid) async {
     if (uid == null) return;
+
+    final confirm = await _showConfirmationDialog(
+      context,
+      "Change Subscription",
+      "Are you sure you want to ${isSubscribed ? "enable" : "disable"} your subscription?",
+    );
+    if (!confirm) return;
+
     try {
       await FirebaseFirestore.instance.collection('users').doc(uid).update({
         'subscriptionStatus': isSubscribed ? 'on' : 'off',
       });
+      Provider.of<AuthProvider>(context, listen: false).updateSubscriptionStatus(isSubscribed ? 'on' : 'off');
     } catch (e) {
       print("Failed to update subscription status: $e");
     }
@@ -19,6 +28,14 @@ class SettingsScreen extends StatelessWidget {
 
   Future<void> _deactivateAccount(BuildContext context, String? uid) async {
     if (uid == null) return;
+
+    final confirm = await _showConfirmationDialog(
+      context,
+      "Deactivate Account",
+      "Are you sure you want to deactivate your account? This action cannot be undone.",
+    );
+    if (!confirm) return;
+
     try {
       await FirebaseFirestore.instance.collection('users').doc(uid).delete();
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
@@ -27,6 +44,32 @@ class SettingsScreen extends StatelessWidget {
     } catch (e) {
       print("Failed to deactivate account: $e");
     }
+  }
+
+  Future<bool> _showConfirmationDialog(BuildContext context, String title, String content) {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            TextButton(
+              child: const Text("Yes"),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    ).then((value) => value ?? false);
   }
 
   @override
@@ -48,27 +91,27 @@ class SettingsScreen extends StatelessWidget {
           children: [
             const SizedBox(height: 15),
             CircleAvatar(
-              radius: 40, // Reduced radius for mobile view
+              radius: 40,
               backgroundColor: Colors.black,
               child: Text(
                 user?.fullName.substring(0, 1) ?? "U",
                 style: const TextStyle(
-                  fontSize: 30, // Reduced font size
+                  fontSize: 30,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
               ),
             ),
-            const SizedBox(height: 8), // Reduced spacing
+            const SizedBox(height: 8),
             Text(
               user?.fullName ?? "User",
               style: const TextStyle(
-                fontSize: 20, // Reduced font size
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
               ),
             ),
-            const SizedBox(height: 20), // Reduced spacing
+            const SizedBox(height: 20),
             _buildActionCard(
               context,
               title: 'Change Details',
@@ -96,8 +139,7 @@ class SettingsScreen extends StatelessWidget {
                 Navigator.pushNamed(context, '/emailChange');
               },
             ),
-            const SizedBox(height: 15), // Adjust spacing
-            // Subscription Toggle
+            const SizedBox(height: 15),
             Card(
               color: Colors.lightBlue[50],
               elevation: 3.0,
@@ -112,14 +154,13 @@ class SettingsScreen extends StatelessWidget {
                 value: (user?.subscriptionStatus ?? 'off') == 'on',
                 activeColor: Colors.black,
                 onChanged: (bool value) {
-                  _toggleSubscription(value, user?.uid);
-                  authProvider.updateSubscriptionStatus(value ? 'on' : 'off');
+                  _toggleSubscription(context, value, user?.uid);
                 },
                 secondary: const Icon(Icons.subscriptions, color: Colors.black),
                 contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
               ),
             ),
-            const SizedBox(height: 15), // Adjust spacing
+            const SizedBox(height: 15),
             _buildActionCard(
               context,
               title: 'Deactivate Account',
@@ -136,7 +177,7 @@ class SettingsScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         selectedItemColor: Colors.lightBlue,
         unselectedItemColor: Colors.black54,
-        currentIndex: 2, // "Settings" is the default selected index
+        currentIndex: 2,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

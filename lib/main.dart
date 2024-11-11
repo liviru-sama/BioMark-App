@@ -3,10 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'providers/auth_provider.dart';
-import 'screens/register_screen.dart';
-import 'screens/login_screen.dart';
-import 'screens/profile_screen.dart';
-import 'screens/home_screen.dart';
 import 'utils/theme.dart';
 import 'utils/routes.dart';
 
@@ -30,8 +26,8 @@ class BiomarkApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Biomark App',
         theme: AppTheme.lightTheme,
-        initialRoute: Routes.login,
-        onGenerateRoute: Routes.generateRoute,
+        initialRoute: Routes.login, // Starting route
+        onGenerateRoute: Routes.generateRoute, // Route generator
       ),
     );
   }
