@@ -1,18 +1,31 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user_model.dart';
+import '../utils/encryption_helper.dart';
 
 class FirestoreService {
-  final CollectionReference _usersCollection = FirebaseFirestore.instance.collection('users');
+  final FirebaseFirestore firestoreInstance = FirebaseFirestore.instance;
+  final EncryptionHelper encryptionHelper;
 
-  Future<void> createUser(UserModel user) async {
-    await _usersCollection.doc(user.uid).set(user.toMap());
-  }
+  FirestoreService(this.encryptionHelper);
 
   Future<UserModel?> getUser(String uid) async {
-    DocumentSnapshot doc = await _usersCollection.doc(uid).get();
-    if (doc.exists) {
-      return UserModel.fromMap(doc.data() as Map<String, dynamic>, uid); // Pass uid here
+    try {
+      final userData = await firestoreInstance.collection('users').doc(uid).get();
+      if (userData.exists) {
+        // Pass userData, uid, and encryptionHelper to fromMap
+        return UserModel.fromMap(userData.data()!, uid, encryptionHelper);
+      }
+    } catch (e) {
+      print("Failed to fetch user data: $e");
     }
     return null;
+  }
+
+  Future<void> updateUserField(String uid, String field, dynamic value) async {
+    try {
+      await firestoreInstance.collection('users').doc(uid).update({field: value});
+    } catch (e) {
+      print("Failed to update user field: $e");
+    }
   }
 }

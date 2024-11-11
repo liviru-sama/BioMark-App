@@ -50,7 +50,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             .collection('users')
             .doc(userCredential.user!.uid)
             .set({
-          'fullName': encryptedFullName,
+          'fullName': _fullName.text.trim(),
           'email': _email.text.trim(),
           'dateOfBirth': _dateOfBirth.text.trim(),
           'timeOfBirth': _timeOfBirth.text.trim(),
@@ -64,6 +64,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           'bestFriendName': _bestFriendName.text.trim(),
           'petName': _petName.text.trim(),
           'customQuestion': _customQuestion.text.trim(),
+          'subscriptionStatus': 'on',
           'createdAt': FieldValue.serverTimestamp(),
         });
 
